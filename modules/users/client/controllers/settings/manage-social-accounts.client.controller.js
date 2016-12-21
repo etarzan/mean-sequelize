@@ -36,6 +36,7 @@
       }).success(function (response) {
         // If successful show success message and clear form
         vm.success = true;
+        response.additionalProvidersData = JSON.parse(response.additionalProvidersData);
         vm.user = Authentication.user = response;
       }).error(function (response) {
         vm.error = response.message;

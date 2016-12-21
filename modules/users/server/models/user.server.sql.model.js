@@ -84,26 +84,25 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING
     },
     salt: {
       type: DataTypes.STRING
     },
     profileImageURL: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(1024),
       field: "profile_image_url",
-      defaultValue: 'modules/users/client/img/profile/default.png'
+      defaultValue: JSON.stringify('modules/users/client/img/profile/default.png')
     },
     provider: {
       type: DataTypes.STRING
     },
     providerData: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       field: "provider_data"
     },
     additionalProvidersData: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       field: "addl_provider_data"
     },
     roles: {
@@ -142,28 +141,33 @@ module.exports = function(sequelize, DataTypes) {
     },
     //class methods
     classMethods: {
-
       /**
-       * Find possible not used username
+       * Find possible unique username
        */
       findUniqueUsername: function(username, suffix, callback) {
         var _this = this;
         var possibleUsername = username.toLowerCase() + (suffix || '');
-
+        console.log("possibleUsername!!!"+possibleUsername);
         _this.findOne({
-          username: possibleUsername
-        }, function(err, user) {
-          if (!err) {
-            if (!user) {
-              callback(possibleUsername);
-            } else {
-              return _this.findUniqueUsername(username, (suffix || 0) + 1, callback);
-            }
-          } else {
-            callback(null);
+          where: {
+            username: possibleUsername
           }
+        }).then(function(user) {
+          console.log("User !!!" + JSON.stringify(user));
+          if (!user) {
+            console.log("Internal possibleUsername:::::::"+possibleUsername);
+            return callback(possibleUsername);
+          } else {
+            return _this.findUniqueUsername(username, (suffix || 0) + 1);
+          }
+        }).catch(function(err) {
+          console.error("User Model:findUniqueUsername:"+err);
+          return callback(null);
         });
       },
+
+
+
       /**
        * Generates a random passphrase that passes the owasp test
        * Returns a promise that resolves with the generated passphrase, or rejects with an error if something goes wrong.
@@ -224,7 +228,7 @@ module.exports = function(sequelize, DataTypes) {
 
     //associations
     associate: function(models) {
-      User.hasMany(models.Article);
+  //    User.hasMany(models.Article);
     },
 
 

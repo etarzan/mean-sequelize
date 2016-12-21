@@ -14,6 +14,10 @@
       user: $window.user
     };
 
+    // parsing additional provider data
+    if(auth.user && auth.user.additionalProvidersData)
+      auth.user.additionalProvidersData = JSON.parse(auth.user.additionalProvidersData);
+
     return auth;
   }
 }());

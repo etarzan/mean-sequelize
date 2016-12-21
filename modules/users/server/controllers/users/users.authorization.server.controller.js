@@ -3,14 +3,15 @@
 /**
  * Module dependencies
  */
-var _ = require('lodash'),
+var path = require('path'),
+ _ = require('lodash'),
   mongoose = require('mongoose'),
-  User = require('../../../../../config/lib/sequelize').User;
+  User = require(path.resolve('./config/lib/sequelize')).User;
 
 /**
  * User middleware
  */
-exports.userByID = function (req, res, next, id) {
+exports.userByID = function(req, res, next, id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
       message: 'User is invalid'
@@ -19,7 +20,7 @@ exports.userByID = function (req, res, next, id) {
 
   User.findOne({
     id: id
-  }).exec(function (err, user) {
+  }).exec(function(err, user) {
     if (err) {
       return next(err);
     } else if (!user) {
